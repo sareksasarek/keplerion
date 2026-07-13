@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О проекте | Keplerion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comforter&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Science+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1A0A2E;
+            color: #E0C3FC;
+            font-family: 'Old Standard TT', serif;
+            font-size: 18px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                repeating-conic-gradient(from 0deg at 50% 50%, #C8A96E15 0deg 1.5deg, transparent 1.5deg 15deg),
+                repeating-radial-gradient(circle at 50% 50%, #C8A96E15 0px, #C8A96E15 1px, transparent 1px, transparent 25px),
+                radial-gradient(circle at 30% 40%, #A259FF20 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, #A259FF15 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Боковая панель */
+        .sidebar {
+            width: 240px;
+            background: rgba(10, 5, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid #C8A96E30;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .sidebar-logo {
+            font-family: 'Science Gothic', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: #C8A96E;
+            text-decoration: none;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(200,169,110,0.4);
+        }
+
+        .back-home {
+            font-family: 'Science Gothic', sans-serif;
+            font-size: 14px;
+            color: #C8A96E;
+            text-decoration: none;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: opacity 0.3s;
+        }
+
+        .back-home:hover {
+            opacity: 1;
+            color: #A259FF;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 60px;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .home-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(200, 169, 110, 0.15);
+            backdrop-filter: blur(6px);
+            border: 1px solid #C8A96E60;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #C8A96E;
+            font-size: 22px;
+            transition: all 0.3s;
+            z-index: 20;
+        }
+
+        .home-icon:hover {
+            background: rgba(162, 89, 255, 0.25);
+            border-color: #A259FF;
+            color: #A259FF;
+            box-shadow: 0 0 18px rgba(162,89,255,0.6);
+        }
+
+        h1 {
+            font-family: 'Science Gothic', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: #C8A96E;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(200,169,110,0.5);
+        }
+
+        h2 {
+            font-family: 'Science Gothic', sans-serif;
+            font-weight: 700;
+            font-size: 32px;
+            color: #C8A96E;
+            margin: 40px 0 20px;
+            text-shadow: 0 0 12px rgba(200,169,110,0.3);
+            border-bottom: 1px solid #C8A96E30;
+            padding-bottom: 10px;
+        }
+
+        .idea-block, .fonts-block, .colors-block, .authors-block {
+            background: rgba(26, 10, 46, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid #C8A96E40;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .fonts-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .font-sample {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .font-sample h3 {
+            font-family: 'Science Gothic', sans-serif;
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #C8A96E;
+        }
+
+        .colors-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .color-card {
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .color-swatch {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            margin: 0 auto 10px;
+            border: 1px solid #C8A96E50;
+        }
+
+        .authors {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .author {
+            text-align: center;
+        }
+
+        .author-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #A259FF, #1A0A2E);
+            border: 2px solid #C8A96E;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Science Gothic', sans-serif;
+            font-weight: 700;
+            font-size: 36px;
+            color: #C8A96E;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 15px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <a href="index.html" class="sidebar-logo">Keplerion</a>
+        <a href="index.html" class="back-home">← На главную</a>
+    </aside>
+
+    <a href="index.html" class="home-icon" title="На главную">🏠</a>
+
+    <main class="main-content">
+        <h1>О проекте Keplerion</h1>
+
+        <div class="idea-block">
+            <p style="font-size: 22px; font-family: 'Comforter', cursive; margin-bottom: 15px;">Исследуем неизведанное. Объясняем непознанное.</p>
+            <p>
+                <strong>Keplerion</strong> — научно-популярный журнал, который превращает сложные научные концепции в захватывающее путешествие. Мы вдохновлены эстетикой таинственных лабораторий, магией технологий и неутомимой жаждой открытий. Наша цель — не просто информировать, а пробуждать любопытство, показывая науку как искусство возможного.
+            </p>
+            <p style="margin-top: 15px;">
+                <strong>Смысл проекта:</strong> показать, что наука — это не скучные формулы, а ключ к пониманию мира и самого себя. Мы переводим сложное на язык красоты и вдохновения, делая знания доступными и желанными для каждого.
+            </p>
+        </div>
+
+        <h2>Типографика</h2>
+        <div class="fonts-block">
+            <div class="fonts-row">
+                <div class="font-sample">
+                    <h3 style="font-family: 'Science Gothic', sans-serif;">Science Gothic</h3>
+                    <p style="font-family: 'Science Gothic', sans-serif; font-size: 24px; color: #C8A96E;">Заголовки и акценты</p>
+                    <p>Технологичный гротеск без засечек, напоминающий интерфейсы будущего. Используется для H1, H2, навигации и кнопок.</p>
+                </div>
+                <div class="font-sample">
+                    <h3 style="font-family: 'Old Standard TT', serif;">Old Standard TT</h3>
+                    <p style="font-family: 'Old Standard TT', serif; font-size: 20px; color: #E0C3FC;">Основной текст</p>
+                    <p>Классическая антиква, придающая тексту достоинство и научную традицию. Идеальна для длинных статей.</p>
+                </div>
+                <div class="font-sample">
+                    <h3 style="font-family: 'Comforter', cursive;">Comforter</h3>
+                    <p style="font-family: 'Comforter', cursive; font-size: 28px; color: #E0C3FC;">Слоганы и поэзия</p>
+                    <p>Рукописный шрифт для коротких эмоциональных фраз, придающий живость и индивидуальность.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>Цветовая палитра</h2>
+        <div class="colors-block">
+            <div class="colors-row">
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #1A0A2E;"></div>
+                    <p style="color: #C8A96E;">Hextech Void</p>
+                    <p>#1A0A2E</p>
+                    <p>Основной фон, глубина, тайна</p>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #C8A96E;"></div>
+                    <p style="color: #C8A96E;">Piltover Brass</p>
+                    <p>#C8A96E</p>
+                    <p>Заголовки, логотип, золото знаний</p>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #E0C3FC;"></div>
+                    <p style="color: #E0C3FC;">Amethyst Haze</p>
+                    <p>#E0C3FC</p>
+                    <p>Основной текст, мягкое свечение</p>
+                </div>
+                <div class="color-card">
+                    <div class="color-swatch" style="background-color: #A259FF;"></div>
+                    <p style="color: #A259FF;">Arcane Pulse</p>
+                    <p>#A259FF</p>
+                    <p>Акценты, кнопки, энергия</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>Авторы проекта</h2>
+        <div class="authors-block">
+            <div class="authors">
+                <div class="author">
+                    <div class="author-avatar">С</div>
+                    <p style="color: #C8A96E; font-size: 24px;">Софья Березикова</p>
+                    <p>Дизайн, код, атмосфера</p>
+                </div>
+                <div class="author">
+                    <div class="author-avatar">А</div>
+                    <p style="color: #C8A96E; font-size: 24px;">Арина Шмидт</p>
+                    <p>Контент, структура, вдохновение</p>
+                </div>
+            </div>
+            <p style="margin-top: 20px; opacity: 0.8;">
+                Мы — команда энтузиастов, которая верит, что наука может быть красивой, а технологии — человечными. Этот проект — наше приглашение в мир, где каждая статья — маленькое открытие.
+            </p>
+        </div>
+    </main>
+</body>
+</html>
