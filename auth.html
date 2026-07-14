@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход / Регистрация | Keplerion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comforter&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Science+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* (стили без изменений) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1A0A2E;
+            color: #E0C3FC;
+            font-family: 'Old Standard TT', serif;
+            font-size: 18px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                repeating-conic-gradient(from 0deg at 50% 50%, #C8A96E15 0deg 1.5deg, transparent 1.5deg 15deg),
+                repeating-radial-gradient(circle at 50% 50%, #C8A96E15 0px, #C8A96E15 1px, transparent 1px, transparent 25px),
+                radial-gradient(circle at 30% 40%, #A259FF20 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, #A259FF15 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .home-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+            font-family: 'Science Gothic', sans-serif;
+            font-size: 14px;
+            color: #C8A96E;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .home-link:hover {
+            opacity: 1;
+            color: #A259FF;
+        }
+
+        .auth-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            background: rgba(26, 10, 46, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #C8A96E40;
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(162,89,255,0.2);
+            text-align: center;
+        }
+
+        .auth-logo {
+            font-family: 'Science Gothic', sans-serif;
+            font-weight: 700;
+            font-size: 36px;
+            color: #C8A96E;
+            text-decoration: none;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(200,169,110,0.4);
+            display: block;
+        }
+
+        .auth-subtitle {
+            font-family: 'Comforter', cursive;
+            font-size: 24px;
+            color: #E0C3FC;
+            margin-bottom: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #C8A96E30;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            font-family: 'Science Gothic', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: #C8A96E;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .tab-btn.active {
+            color: #A259FF;
+            border-bottom: 2px solid #A259FF;
+            text-shadow: 0 0 8px #A259FF;
+        }
+
+        .form-panel {
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #C8A96E;
+            font-size: 16px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(10, 5, 25, 0.8);
+            border: 1px solid #C8A96E50;
+            border-radius: 6px;
+            color: #E0C3FC;
+            font-family: 'Old Standard TT', serif;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #A259FF;
+            box-shadow: 0 0 10px rgba(162,89,255,0.4);
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 14px;
+            background-color: #A259FF;
+            color: #FFFFFF;
+            font-family: 'Science Gothic', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+        }
+
+        .cta-button:hover {
+            background-color: #C17AFF;
+            box-shadow: 0 0 20px rgba(162,89,255,0.7);
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 25px 20px;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-link">← На главную</a>
+
+    <div class="auth-container">
+        <a href="index.html" class="auth-logo">Keplerion</a>
+        <p class="auth-subtitle">Войдите в мир открытий</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="login">Вход</button>
+            <button class="tab-btn" data-tab="register">Регистрация</button>
+        </div>
+
+        <!-- Форма входа -->
+        <div id="login-panel" class="form-panel active">
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="your@email.ru" required>
+            </div>
+            <div class="input-group">
+                <label>Пароль</label>
+                <input type="password" id="login-password" placeholder="••••••••" required>
+            </div>
+            <button class="cta-button" id="login-btn">Войти</button>
+            <p class="error-msg" id="login-error">Неверный email или пароль</p>
+        </div>
+
+        <!-- Форма регистрации -->
+        <div id="register-panel" class="form-panel">
+            <div class="input-group">
+                <label>Имя</label>
+                <input type="text" id="reg-name" placeholder="Ваше имя" required>
+            </div>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="reg-email" placeholder="your@email.ru" required>
+            </div>
+            <div class="input-group">
+                <label>Пароль</label>
+                <input type="password" id="reg-password" placeholder="Придумайте пароль" required>
+            </div>
+            <div class="input-group">
+                <label>Подтверждение пароля</label>
+                <input type="password" id="reg-password-confirm" placeholder="Повторите пароль" required>
+            </div>
+            <button class="cta-button" id="register-btn">Зарегистрироваться</button>
+            <p class="error-msg" id="register-error">Пароли не совпадают</p>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ---- Проверка авторизации ----
+            const profile = localStorage.getItem('keplerion_profile');
+            if (profile) {
+                // Если профиль уже есть, сразу перенаправляем в кабинет
+                window.location.href = 'cabinet.html';
+                return;
+            }
+
+            // ---- Переключение табов ----
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.form-panel');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    panels.forEach(p => p.classList.remove('active'));
+                    document.getElementById(btn.dataset.tab + '-panel').classList.add('active');
+                    document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+                });
+            });
+
+            // ---- Вход ----
+            document.getElementById('login-btn').addEventListener('click', () => {
+                const email = document.getElementById('login-email').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+                if (email && password) {
+                    // Создаём профиль (для демо используем введённые данные)
+                    const profile = {
+                        name: email.split('@')[0],
+                        email: email,
+                        joined: Date.now(),
+                        avatar: null
+                    };
+                    localStorage.setItem('keplerion_profile', JSON.stringify(profile));
+                    window.location.href = 'cabinet.html';
+                } else {
+                    document.getElementById('login-error').style.display = 'block';
+                }
+            });
+
+            // ---- Регистрация ----
+            document.getElementById('register-btn').addEventListener('click', () => {
+                const name = document.getElementById('reg-name').value.trim();
+                const email = document.getElementById('reg-email').value.trim();
+                const password = document.getElementById('reg-password').value.trim();
+                const confirm = document.getElementById('reg-password-confirm').value.trim();
+
+                if (!name || !email || !password || !confirm) {
+                    document.getElementById('register-error').textContent = 'Заполните все поля';
+                    document.getElementById('register-error').style.display = 'block';
+                    return;
+                }
+                if (password !== confirm) {
+                    document.getElementById('register-error').textContent = 'Пароли не совпадают';
+                    document.getElementById('register-error').style.display = 'block';
+                    return;
+                }
+                // Сохраняем профиль
+                const profile = {
+                    name: name,
+                    email: email,
+                    joined: Date.now(),
+                    avatar: null
+                };
+                localStorage.setItem('keplerion_profile', JSON.stringify(profile));
+                window.location.href = 'cabinet.html';
+            });
+        })();
+    </script>
+</body>
+</html>

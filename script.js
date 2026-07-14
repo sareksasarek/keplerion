@@ -1,5 +1,5 @@
 // ============================================================
-//  main.js — полная клиентская логика сайта Keplerion (без подписки)
+//  main.js — полная клиентская логика сайта Keplerion
 // ============================================================
 
 (function() {
@@ -7,7 +7,6 @@
 
     // ------ Вспомогательные утилиты ------
     const Utils = {
-        // Получить данные из localStorage
         getData(key, defaultValue = null) {
             try {
                 const raw = localStorage.getItem(key);
@@ -16,37 +15,31 @@
                 return defaultValue;
             }
         },
-        // Сохранить данные в localStorage
         setData(key, value) {
             localStorage.setItem(key, JSON.stringify(value));
         },
-        // Генерация уникального ID
         uid() {
             return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
         },
-        // Форматирование даты
         formatDate(timestamp) {
             const d = new Date(timestamp);
             return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
         }
     };
 
-    // ------ Модель данных (работа с хранилищем) ------
+    // ------ Модель данных ------
     const Store = {
-        // Профиль
         getProfile() {
             return Utils.getData('keplerion_profile', {
-                name: 'Алексей Константинов',
-                email: 'alex@example.com',
+                name: 'Ваше Имя',
+                email: 'example@example.com',
                 joined: Date.now(),
-                avatar: null // base64 или null
+                avatar: null
             });
         },
         saveProfile(profile) {
             Utils.setData('keplerion_profile', profile);
         },
-
-        // Закладки
         getBookmarks() {
             return Utils.getData('keplerion_bookmarks', []);
         },
@@ -71,8 +64,6 @@
             this.saveBookmarks(list);
             return list;
         },
-
-        // Уведомления
         getNotifications() {
             return Utils.getData('keplerion_notifications', [
                 { id: 'n1', text: 'Вышла новая статья «Квантовый лабиринт»', date: Date.now() - 2 * 60 * 60 * 1000, read: false },
@@ -93,9 +84,8 @@
         }
     };
 
-    // ------ Рендеринг компонентов ------
+    // ------ Рендеринг ------
     const Render = {
-        // Отрисовка закладок
         bookmarks(container) {
             const items = Store.getBookmarks();
             if (!container) return;
@@ -116,7 +106,6 @@
             html += `</div>`;
             container.innerHTML = html;
 
-            // Делегирование событий на кнопки удаления
             container.querySelectorAll('[data-action="remove-bookmark"]').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     const id = this.dataset.id;
@@ -127,8 +116,6 @@
                 });
             });
         },
-
-        // Отрисовка уведомлений
         notifications(container) {
             const list = Store.getNotifications();
             if (!container) return;
@@ -150,7 +137,6 @@
             });
             container.innerHTML = html;
 
-            // Обработка отметки о прочтении
             container.querySelectorAll('[data-action="mark-read"]').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -161,15 +147,13 @@
                 });
             });
         },
-
-        // Отрисовка профиля
         profile(container) {
             const profile = Store.getProfile();
             if (!container) return;
-            const nameEl = container.querySelector('.profile-info h3');
-            const emailEl = container.querySelector('.profile-info p');
-            const avatarEl = container.querySelector('.avatar');
-            const joinedEl = container.querySelector('.profile-info p:nth-of-type(3)');
+            const nameEl = container.querySelector('#profileName');
+            const emailEl = container.querySelector('#profileEmail');
+            const avatarEl = container.querySelector('#avatarPreview');
+            const joinedEl = container.querySelector('#profileJoined');
 
             if (nameEl) nameEl.textContent = profile.name || 'Имя Фамилия';
             if (emailEl) emailEl.textContent = `Email: ${profile.email || 'example@example.com'}`;
@@ -185,7 +169,6 @@
                     avatarEl.style.color = 'transparent';
                     avatarEl.textContent = '';
                 } else {
-                    // Инициал
                     const initial = (profile.name || 'А')[0].toUpperCase();
                     avatarEl.style.backgroundImage = '';
                     avatarEl.style.color = '#C8A96E';
@@ -193,91 +176,83 @@
                 }
             }
 
-            // Обновляем статистику (заглушка)
-            const badges = container.querySelectorAll('.badge');
-            if (badges.length >= 2) {
-                const bookmarksCount = Store.getBookmarks().length;
-                badges[0].textContent = `Прочитано: ${bookmarksCount * 3} статей`; // условно
-                badges[1].textContent = `В закладках: ${bookmarksCount}`;
-            }
+            // статистика
+            const bookmarksCount = Store.getBookmarks().length;
+            const badgeRead = container.querySelector('#badgeRead');
+            const badgeBookmarks = container.querySelector('#badgeBookmarks');
+            if (badgeRead) badgeRead.textContent = `Прочитано: ${bookmarksCount * 3} статей`;
+            if (badgeBookmarks) badgeBookmarks.textContent = `В закладках: ${bookmarksCount}`;
         }
     };
 
-    // ------ Обновление статистики в профиле (вспомогательная) ------
     function updateStats() {
         const profileContainer = document.querySelector('.profile-card');
-        if (profileContainer) {
-            Render.profile(profileContainer);
-        }
+        if (profileContainer) Render.profile(profileContainer);
     }
 
-    // ------ Инициализация страницы ------
+    // ------ Инициализация ------
     function initPage() {
         const path = window.location.pathname;
         const isCabinet = path.includes('cabinet.html') || path.endsWith('/cabinet.html');
 
-        console.log(`[Keplerion] Инициализация страницы: ${isCabinet ? 'Личный кабинет' : 'Главная'}`);
-
         if (isCabinet) {
+            // Проверяем, авторизован ли пользователь
+            const profile = localStorage.getItem('keplerion_profile');
+            if (!profile) {
+                window.location.href = 'auth.html';
+                return;
+            }
             initCabinet();
         } else {
             initMain();
         }
     }
 
-    // ------ Инициализация ЛИЧНОГО КАБИНЕТА ------
+    // ------ Кабинет ------
     function initCabinet() {
-        // --- Переключение вкладок ---
+        // Переключение вкладок
         const tabs = document.querySelectorAll('.sidebar-nav a[data-tab]');
         const tabContents = document.querySelectorAll('.tab-content');
-        const mainContent = document.querySelector('.main-content');
 
-        if (tabs.length && tabContents.length) {
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = this.dataset.tab;
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    tabContents.forEach(tc => tc.classList.remove('active'));
-                    const targetEl = document.getElementById(target);
-                    if (targetEl) targetEl.classList.add('active');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.dataset.tab;
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                const targetEl = document.getElementById(target);
+                if (targetEl) targetEl.classList.add('active');
 
-                    // Перерендерим динамические блоки при переключении
-                    if (target === 'bookmarks') {
-                        const container = document.querySelector('#bookmarks .articles-grid');
-                        if (container) Render.bookmarks(container);
-                    }
-                    if (target === 'notifications') {
-                        const container = document.querySelector('#notifications');
-                        if (container) Render.notifications(container);
-                    }
-                    if (target === 'profile') {
-                        const container = document.querySelector('.profile-card');
-                        if (container) Render.profile(container);
-                    }
-                    console.log(`[Keplerion] Переключена вкладка: ${target}`);
-                });
+                if (target === 'bookmarks') {
+                    const container = document.querySelector('#bookmarksContainer');
+                    if (container) Render.bookmarks(container);
+                }
+                if (target === 'notifications') {
+                    const container = document.querySelector('#notificationsContainer');
+                    if (container) Render.notifications(container);
+                }
+                if (target === 'profile') {
+                    const container = document.querySelector('.profile-card');
+                    if (container) Render.profile(container);
+                }
+                console.log(`[Keplerion] Переключена вкладка: ${target}`);
             });
-        }
+        });
 
-        // --- Загрузка данных в табы ---
-        // Профиль
+        // Загрузка данных
         const profileCard = document.querySelector('.profile-card');
         if (profileCard) Render.profile(profileCard);
 
-        // Закладки
-        const bookmarksContainer = document.querySelector('#bookmarks .articles-grid');
+        const bookmarksContainer = document.querySelector('#bookmarksContainer');
         if (bookmarksContainer) Render.bookmarks(bookmarksContainer);
 
-        // Оповещения
-        const notifContainer = document.querySelector('#notifications');
+        const notifContainer = document.querySelector('#notificationsContainer');
         if (notifContainer) Render.notifications(notifContainer);
 
-        // --- Редактирование профиля (кнопка) ---
-        const editBtn = document.querySelector('.profile-card .cta-button');
+        // Редактирование профиля (кнопка)
+        const editBtn = document.querySelector('#editProfileBtn');
         if (editBtn) {
-            editBtn.textContent = 'Редактировать профиль';
             editBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 const profile = Store.getProfile();
@@ -298,22 +273,18 @@
             });
         }
 
-        // --- Смена аватарки ---
+        // Смена аватарки
         const avatarWrapper = document.getElementById('avatarWrapper');
         const avatarInput = document.getElementById('avatarInput');
-        const avatarPreview = document.getElementById('avatarPreview');
-
         if (avatarWrapper && avatarInput) {
-            avatarWrapper.addEventListener('click', () => {
-                avatarInput.click();
-            });
-
+            avatarWrapper.addEventListener('click', () => avatarInput.click());
             avatarInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         const dataUrl = event.target.result;
+                        const avatarPreview = document.getElementById('avatarPreview');
                         if (avatarPreview) {
                             avatarPreview.style.backgroundImage = `url('${dataUrl}')`;
                             avatarPreview.style.backgroundSize = 'cover';
@@ -331,13 +302,13 @@
             });
         }
 
-        // --- Настройки (сохранение формы) ---
+        // Настройки
         const settingsForm = document.querySelector('.settings-form');
         if (settingsForm) {
-            const nameInput = settingsForm.querySelector('input[type="text"]');
-            const emailInput = settingsForm.querySelector('input[type="email"]');
-            const passInput = settingsForm.querySelector('input[type="password"]');
-            const saveBtn = settingsForm.querySelector('.cta-button');
+            const nameInput = document.querySelector('#settingsName');
+            const emailInput = document.querySelector('#settingsEmail');
+            const passInput = document.querySelector('#settingsPassword');
+            const saveBtn = document.querySelector('#saveSettingsBtn');
 
             const profile = Store.getProfile();
             if (nameInput) nameInput.value = profile.name || '';
@@ -350,16 +321,10 @@
                     const newEmail = emailInput ? emailInput.value.trim() : '';
                     const newPass = passInput ? passInput.value.trim() : '';
 
-                    if (newName) {
-                        profile.name = newName;
-                    }
-                    if (newEmail) {
-                        profile.email = newEmail;
-                    }
+                    if (newName) profile.name = newName;
+                    if (newEmail) profile.email = newEmail;
                     Store.saveProfile(profile);
-                    if (newPass) {
-                        console.log('[Keplerion] Пароль изменён (демо)');
-                    }
+                    if (newPass) console.log('[Keplerion] Пароль изменён (демо)');
                     Render.profile(profileCard);
                     alert('Настройки сохранены');
                     console.log('[Keplerion] Настройки обновлены');
@@ -367,19 +332,20 @@
             }
         }
 
-        // --- Выход ---
+        // Выход
         const logoutLink = document.querySelector('.logout-link');
         if (logoutLink) {
             logoutLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (confirm('Вы уверены, что хотите выйти?')) {
+                    localStorage.removeItem('keplerion_profile');
                     console.log('[Keplerion] Выход из кабинета');
                     window.location.href = 'index.html';
                 }
             });
         }
 
-        // --- Иконка пользователя (переход на главную) ---
+        // Иконка пользователя (переход на главную)
         const userIcon = document.querySelector('.user-icon');
         if (userIcon) {
             userIcon.addEventListener('click', function(e) {
@@ -389,9 +355,9 @@
         }
     }
 
-    // ------ Инициализация ГЛАВНОЙ СТРАНИЦЫ ------
+    // ------ Главная страница ------
     function initMain() {
-        // --- Плавная прокрутка и подсветка меню ---
+        // Плавная прокрутка и подсветка меню
         const sections = document.querySelectorAll('section');
         const navLinks = document.querySelectorAll('.sidebar-nav a');
 
@@ -425,7 +391,7 @@
             });
         }
 
-        // --- Ссылки "Читать →" в статьях ---
+        // Ссылки "Читать →"
         document.querySelectorAll('.article-card .read-more').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -435,21 +401,23 @@
             });
         });
 
-        // --- Иконка пользователя (переход в кабинет) ---
+        // Иконка пользователя – если залогинен, ведём в кабинет, иначе на вход
         const userIcon = document.querySelector('.user-icon');
         if (userIcon) {
             userIcon.addEventListener('click', function(e) {
                 e.preventDefault();
-                window.location.href = 'cabinet.html';
+                const profile = localStorage.getItem('keplerion_profile');
+                if (profile) {
+                    window.location.href = 'cabinet.html';
+                } else {
+                    window.location.href = 'auth.html';
+                }
             });
         }
-
-        // Декоративная сфера (без действия) — оставлена только для визуала, никаких обработчиков
 
         console.log('[Keplerion] Главная страница готова');
     }
 
-    // ------ Запуск при загрузке DOM ------
+    // ------ Старт ------
     document.addEventListener('DOMContentLoaded', initPage);
-
 })();

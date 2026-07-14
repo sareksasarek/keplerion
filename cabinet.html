@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет | Keplerion</title>
-    <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comforter&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Science+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* (стили без изменений) */
         * {
             margin: 0;
             padding: 0;
@@ -27,7 +27,6 @@
             position: relative;
         }
 
-        /* Паутинный фон */
         body::before {
             content: "";
             position: fixed;
@@ -41,7 +40,6 @@
             z-index: 0;
         }
 
-        /* Боковая панель */
         .sidebar {
             width: 260px;
             background: rgba(10, 5, 25, 0.8);
@@ -134,7 +132,6 @@
             color: #A259FF;
         }
 
-        /* Основной контент */
         .main-content {
             margin-left: 260px;
             flex: 1;
@@ -143,7 +140,6 @@
             z-index: 1;
         }
 
-        /* Иконка личного кабинета (правый верхний) */
         .user-icon {
             position: fixed;
             top: 20px;
@@ -173,7 +169,6 @@
             transform: scale(1.05);
         }
 
-        /* Заголовки секций */
         h2 {
             font-family: 'Science Gothic', sans-serif;
             font-weight: 700;
@@ -191,7 +186,6 @@
             margin-bottom: 15px;
         }
 
-        /* Стили секций (табы) */
         .tab-content {
             display: none;
         }
@@ -200,7 +194,6 @@
             display: block;
         }
 
-        /* Профиль */
         .profile-card {
             display: flex;
             flex-wrap: wrap;
@@ -234,6 +227,8 @@
             font-size: 48px;
             color: #C8A96E;
             transition: opacity 0.3s;
+            background-size: cover;
+            background-position: center;
         }
 
         .avatar-wrapper:hover .avatar {
@@ -307,7 +302,6 @@
             box-shadow: 0 0 20px rgba(162,89,255,0.7);
         }
 
-        /* Оповещения */
         .notification {
             background: rgba(26, 10, 46, 0.6);
             backdrop-filter: blur(8px);
@@ -328,7 +322,6 @@
             opacity: 0.7;
         }
 
-        /* Закладки (карточки статей) */
         .articles-grid {
             display: flex;
             flex-wrap: wrap;
@@ -384,7 +377,6 @@
             text-shadow: 0 0 6px #A259FF;
         }
 
-        /* Настройки */
         .settings-form input {
             width: 100%;
             max-width: 400px;
@@ -404,7 +396,6 @@
             box-shadow: 0 0 8px rgba(162,89,255,0.5);
         }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -447,10 +438,8 @@
     </style>
 </head>
 <body>
-    <!-- Иконка личного кабинета (правый верхний) — ведёт на главную -->
     <a href="index.html" class="user-icon" title="На главную">🏠</a>
 
-    <!-- Боковая панель -->
     <aside class="sidebar">
         <a href="index.html" class="sidebar-logo">Keplerion</a>
         <a href="index.html" class="back-home">← На главную</a>
@@ -463,7 +452,6 @@
         <a href="#" class="logout-link">Выйти из кабинета</a>
     </aside>
 
-    <!-- Основной контент -->
     <main class="main-content">
         <!-- Профиль -->
         <div id="profile" class="tab-content active">
@@ -474,14 +462,14 @@
                     <input type="file" id="avatarInput" accept="image/*">
                 </div>
                 <div class="profile-info">
-                    <h3>Имя Фамилия</h3>
-                    <p>Email: example@example.com</p>
-                    <p>Участник с 2026 года</p>
+                    <h3 id="profileName">Имя Фамилия</h3>
+                    <p id="profileEmail">Email: example@example.com</p>
+                    <p id="profileJoined">Участник с 2026 года</p>
                     <div class="stat-badges">
-                        <span class="badge">Прочитано: - статей</span>
-                        <span class="badge">В закладках: -</span>
+                        <span class="badge" id="badgeRead">Прочитано: - статей</span>
+                        <span class="badge" id="badgeBookmarks">В закладках: -</span>
                     </div>
-                    <button class="cta-button">Редактировать профиль</button>
+                    <button class="cta-button" id="editProfileBtn">Редактировать профиль</button>
                 </div>
             </div>
         </div>
@@ -489,44 +477,14 @@
         <!-- Оповещения -->
         <div id="notifications" class="tab-content">
             <h2>Оповещения</h2>
-            <div class="notification">
-                <p>Вышла новая статья «Квантовый лабиринт»</p>
-                <span class="notification-date">2 часа назад</span>
-            </div>
-            <div class="notification">
-                <p>Ваша подписка продлена до 15.08.2026</p>
-                <span class="notification-date">Вчера</span>
-            </div>
-            <div class="notification">
-                <p>Добавлена возможность скачивать PDF-версии</p>
-                <span class="notification-date">3 дня назад</span>
-            </div>
-            <div class="notification">
-                <p>Добро пожаловать в Keplerion! Мы рады вам.</p>
-                <span class="notification-date">Месяц назад</span>
-            </div>
+            <!-- Контейнер для динамического рендера -->
+            <div id="notificationsContainer"></div>
         </div>
 
         <!-- Закладки -->
         <div id="bookmarks" class="tab-content">
             <h2>Закладки</h2>
-            <div class="articles-grid">
-                <div class="article-card">
-                    <h4>Квантовый лабиринт</h4>
-                    <p>Как физики запутали реальность</p>
-                    <span class="remove-link" onclick="this.parentElement.remove()">Удалить из закладок</span>
-                </div>
-                <div class="article-card">
-                    <h4>Геномный конструктор</h4>
-                    <p>Инструменты редактирования будущего</p>
-                    <span class="remove-link" onclick="this.parentElement.remove()">Удалить из закладок</span>
-                </div>
-                <div class="article-card">
-                    <h4>Хекстек-аналогия</h4>
-                    <p>Магия кристаллов в реальной науке</p>
-                    <span class="remove-link" onclick="this.parentElement.remove()">Удалить из закладок</span>
-                </div>
-            </div>
+            <div id="bookmarksContainer" class="articles-grid"></div>
         </div>
 
         <!-- Настройки -->
@@ -534,18 +492,17 @@
             <h2>Настройки</h2>
             <form class="settings-form">
                 <label style="display: block; margin-bottom: 5px; color: #C8A96E;">Имя</label>
-                <input type="text" value="Алексей Константинов">
+                <input type="text" id="settingsName" value="Алексей Константинов">
                 <label style="display: block; margin-bottom: 5px; color: #C8A96E;">Email</label>
-                <input type="email" value="alex@example.com">
+                <input type="email" id="settingsEmail" value="alex@example.com">
                 <label style="display: block; margin-bottom: 5px; color: #C8A96E;">Новый пароль</label>
-                <input type="password" placeholder="Введите новый пароль">
+                <input type="password" id="settingsPassword" placeholder="Введите новый пароль">
                 <br>
-                <button type="button" class="cta-button" onclick="alert('Настройки сохранены (демо)')">Сохранить изменения</button>
+                <button type="button" class="cta-button" id="saveSettingsBtn">Сохранить изменения</button>
             </form>
         </div>
     </main>
 
-    <!-- Скрипты -->
     <script src="script.js"></script>
 </body>
 </html>
